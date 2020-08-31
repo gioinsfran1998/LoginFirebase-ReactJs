@@ -33,22 +33,25 @@ const Login = (props) => {
 	};
 	const login = useCallback(async () => {
 		try {
-			const res = await auth.signInWithEmailAndPassword(email, pass);
-			console.log(res.user);
+			await auth.signInWithEmailAndPassword(email, pass);
+			// console.log(res.user);
 			setEmail('');
 			setPass('');
 			setError(null);
 			props.history.push('/admin');
 		} catch (error) {
-			console.log(error);
+			// console.log(error)
 			if (error.code === 'auth/invalid-email') {
 				setError('Email no valido');
+				return;
 			}
 			if (error.code === 'auth/user-not-found') {
 				setError('Email no registrado');
+				return;
 			}
 			if (error.code === 'auth/wrong-password') {
 				setError('Contrasenha incorrecta');
+				return;
 			}
 			setError(null);
 		}
@@ -59,22 +62,28 @@ const Login = (props) => {
 				email,
 				pass
 			);
-			console.log(res.user);
+			// console.log(res.user);
 			await db.collection('usuarios').doc(res.user.email).set({
 				email: res.user.email,
 				uid: res.user.uid,
+			});
+			await db.collection(res.user.uid).add({
+				name: 'Tarea de ejemplo',
+				fecha: Date.now(),
 			});
 			setEmail('');
 			setPass('');
 			setError(null);
 			props.history.push('/admin');
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 			if (error.code === 'auth/invalid-email') {
 				setError('Email no valido');
+				return;
 			}
 			if (error.code === 'auth/email-already-in-use') {
 				setError('Email ya existente');
+				return;
 			}
 		}
 	}, [email, pass, props.history]);
@@ -120,6 +129,15 @@ const Login = (props) => {
 								? 'Ya estas registrado?'
 								: 'No tienes cuenta?'}
 						</button>
+						{!esRegistro ? (
+							<button
+								className='btn btn-lg btn-danger btn-sm mt-2'
+								type='button'
+								onClick={() => props.history.push('/reset')}
+							>
+								Recuperar contrasenha
+							</button>
+						) : null}
 					</form>
 				</div>
 			</div>

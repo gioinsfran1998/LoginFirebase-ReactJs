@@ -8,12 +8,13 @@ import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Admin from './components/Admin';
 import { auth } from './firebase';
+import Reset from './components/Reset';
 
 function App() {
 	const [firebaseUser, setFirebaseUser] = useState(false);
 	useEffect(() => {
 		auth.onAuthStateChanged((user) => {
-			console.log(user);
+			// console.log(user);
 			if (user) {
 				setFirebaseUser(user);
 			} else {
@@ -33,6 +34,9 @@ function App() {
 				<Switch>
 					<Route path='/admin'>
 						<Admin />
+					</Route>
+					<Route path='/reset' exact>
+						<Reset />
 					</Route>
 				</Switch>
 				<Switch>
